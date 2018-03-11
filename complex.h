@@ -1,13 +1,7 @@
-#include <iostream>
-#include <math.h>
-using namespace std;
+typedef struct {double a; double b;} numcomplex;
 
-typedef struct{double a; double b;} numcomplex;
-typedef struct{numcomplex array[100];} numcomplex_array;
-
-
-//Declaración de funciones
 double cplx_mod(numcomplex z);
+
 numcomplex cplx_conj(numcomplex z);
 numcomplex cplx_sum(numcomplex z1, numcomplex z2);
 numcomplex cplx_dif(numcomplex z1, numcomplex z2);
@@ -15,7 +9,7 @@ numcomplex cplx_prod(numcomplex z1, numcomplex z2);
 numcomplex cplx_div(numcomplex z1, numcomplex z2);
 numcomplex cplx_pow(numcomplex z1, int n);
 numcomplex cplx_raiz(numcomplex z1, double n);
-numcomplex_array raices_nesimas(numcomplex z1, int n);
+numcomplex raices_nesimas(numcomplex z1, int n);
 
 int main() {
   numcomplex z1, z2;
@@ -52,17 +46,15 @@ int main() {
   cout << "("<<z.a<<","<<z.b<<")" << '\n';
 
   cout<<"Raices n-esimas(z1, 3):";
-  numcomplex_array z_raices;
+  numcomplex *z_raices;
 
   z_raices = raices_nesimas(z1, 3);
-  for(int k=0; k < 2; k++)
-    cout << "\n("<<z_raices.array[k].a<<","<<z_raices.array[k].b<<")" << '\n';
+  for(int k=0; k<=3; k++)
+    cout << "\n("<<z_raices[k].a<<","<<z_raices[k].b<<")" << '\n';
 
   return 0;
 }
 
-
-//Definición de funciones
 double cplx_mod(numcomplex z){
   double modulo=0;
   modulo = sqrt(pow(z.a,2)+pow(z.b,2));
@@ -113,30 +105,39 @@ numcomplex cplx_div(numcomplex z1, numcomplex z2){
   return z;
 }
 
-
 //sobrecarga de funciones para potencias y raíces n-esimas
-//cplx_pow calcua la n-ésima potencia entera del número z1
 numcomplex cplx_pow(numcomplex z1, int n){
   numcomplex z;
   z.a=pow(cplx_mod(z1),n)*cos(n*cplx_fase(z1));
   z.b=pow(cplx_mod(z1),n)*sin(n*cplx_fase(z1));
-  return z;
-}
-//cplx_raiz calcua la n-ésima potencia fraccionaria del número z1. Devuelve UNA raíz
-numcomplex cplx_raiz(numcomplex z1, double n){
-  numcomplex z;
-    z.a=pow(cplx_mod(z1),n)*cos(n*cplx_fase(z1));
-    z.b=pow(cplx_mod(z1),n)*sin(n*cplx_fase(z1));
+
   return z;
 }
 
-//Las n potencias n-ésimas del número z. Devuelve un arreglo de tipo numcomplex
-numcomplex_array  raices_nesimas(numcomplex z1, int n){
-  numcomplex_array arreglo;
+numcomplex cplx_raiz(numcomplex z1, double n){
+  numcomplex z;
+  //numcomplex array[(int)n];
+  //int k=0;
+  //for(k = 0; k < n; k++){
+    //array[k].a=pow(cplx_mod(z1),n)*cos(n*cplx_fase(z1));
+    //array[k].b=pow(cplx_mod(z1),n)*sin(n*cplx_fase(z1));
+    z.a=pow(cplx_mod(z1),n)*cos(n*cplx_fase(z1));
+    z.b=pow(cplx_mod(z1),n)*sin(n*cplx_fase(z1));
+    //cout << "("<<array[k].a<<","<<array[k].b<<")" << '\n';
+  //}
+  return z;
+}
+
+
+
+
+numcomplex * raices_nesimas(numcomplex arr[], numcomplex z1, int n){
+
+  numcomplex array[n];
   int k=0;
   for(k = 0; k < n; k++){
-    arreglo.array[k].a=pow(cplx_mod(z1),1/(double)n)*cos((cplx_fase(z1)+2*k*M_PI)/n);
-    arreglo.array[k].b=pow(cplx_mod(z1),1/(double)n)*sin((cplx_fase(z1)+2*k*M_PI)/n);
+    array[k].a=pow(cplx_mod(z1),1/(double)n)*cos((cplx_fase(z1)+2*k*M_PI)/n);
+    array[k].b=pow(cplx_mod(z1),1/(double)n)*sin((cplx_fase(z1)+2*k*M_PI)/n);
   }
-  return arreglo;
+  return array;
 }
