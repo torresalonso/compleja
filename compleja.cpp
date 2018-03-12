@@ -19,6 +19,10 @@ numcomplex cplx_ev_poli(int grado, double coeficientes[], numcomplex z);
 numcomplex cplx_horner(int grado, double coeficientes[], numcomplex z);
 numcomplex_array raices_nesimas(numcomplex z1, int n);
 
+//funciones trigonométricas
+numcomplex cplx_sen(numcomplex z, double tolerancia =0.5*pow(10,-8));
+
+
 
 //Variables globales
 int k=0;
@@ -86,38 +90,9 @@ int main() {
     cout << "El polinomio evaluado con Horner en 1+2i es: ";
     cout << "("<<polinomio.a<<","<<polinomio.b<<")" << '\n';
 
+    cout << "El seno de 1+2i: "<< cplx_sen(z1);
     return 0;
   }
-
-numcomplex cplx_horner(int grado, double coeficientes[], numcomplex z){
-  numcomplex polinomio, coef_complejo;
-
-  cout << "\n\t(Desde Horner \n";
-  cout << "("<<z.a<<","<<z.b<<")" << '\n';
-
-  polinomio.a = coeficientes[grado];
-  polinomio.b = coeficientes[grado];
-  cout << "("<<polinomio.a<<","<<polinomio.b<<")" << '\n';
-
-  for(k=grado-1; k >= 0; k--){
-    coef_complejo.a = coeficientes[k];
-    coef_complejo.b=0;
-
-    polinomio=cplx_sum(coef_complejo,cplx_prod(z,polinomio));
-    cout << "\nk= "<<k<<"\tParte real: ";
-    cout <<polinomio.a<<" \n";
-
-    cout << "\nk= "<<k<<"\tParte Compleja: ";
-    cout <<polinomio.b<<" \n";
-}
-  return polinomio;
-}
-
-
-
-
-
-
 
 //Definición de funciones
 double cplx_mod(numcomplex z){
@@ -184,9 +159,11 @@ numcomplex cplx_raiz(numcomplex z1, double n){
   numcomplex z;
     z.a=pow(cplx_mod(z1),n)*cos(n*cplx_fase(z1));
     z.b=pow(cplx_mod(z1),n)*sin(n*cplx_fase(z1));
+
   return z;
 }
 
+//evaluación de polinomios
 numcomplex cplx_ev_poli(int grado, double coeficientes[], numcomplex z){
   ///EVALUAR POLINOMIOS EN NÚMEROS COMPLEJOS
   int k=0;
@@ -197,7 +174,19 @@ numcomplex cplx_ev_poli(int grado, double coeficientes[], numcomplex z){
   }
   return polinomio;
 }
+numcomplex cplx_horner(int grado, double coeficientes[], numcomplex z){
+  numcomplex polinomio, coef_complejo;
 
+  polinomio.a = coeficientes[grado];
+  polinomio.b = 0;
+
+  for(k=grado-1; k >= 0; k--){
+    coef_complejo.a = coeficientes[k];
+    coef_complejo.b=0;
+    polinomio=cplx_sum(coef_complejo,cplx_prod(z,polinomio));
+  }
+  return polinomio;
+}
 
 //Las n potencias n-ésimas del número z. Devuelve un arreglo de tipo numcomplex
 numcomplex_array  raices_nesimas(numcomplex z1, int n){
@@ -208,4 +197,29 @@ numcomplex_array  raices_nesimas(numcomplex z1, int n){
     arreglo.array[k].b=pow(cplx_mod(z1),1/(double)n)*sin((cplx_fase(z1)+2*k*M_PI)/n);
   }
   return arreglo;
+}
+
+
+
+//funciones trigonométricas
+
+numcomplex cplx_sen(numcomplex z, double tolerancia){
+  //implementa la serie de Taylor con siete cifras por default
+
+  double coeficientes[21], c=0;
+
+  for(k=0; k<=20; k++){
+    //La derivada es cíclica:
+    if(k%4==0)
+      coeficientes[k]=sin(c)/factorial(k);
+    if(k%4==1)
+      coeficientes[k]=cos(c)/factorial(k);
+    if(k%4==2)
+      coeficientes[k]=-sin(c)/factorial(k);
+    if(k%4==3)
+      coeficientes[k]=-cos(c)/factorial(k);
+  }
+
+  return cplx_horner(20,coeficientes,z);
+
 }
