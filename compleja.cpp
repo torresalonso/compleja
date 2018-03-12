@@ -7,6 +7,7 @@ typedef struct{numcomplex array[100];} numcomplex_array;
 
 
 //Declaración de funciones
+long double factorial(long double n);
 double cplx_mod(numcomplex z);
 numcomplex cplx_conj(numcomplex z);
 numcomplex cplx_sum(numcomplex z1, numcomplex z2);
@@ -20,7 +21,7 @@ numcomplex cplx_horner(int grado, double coeficientes[], numcomplex z);
 numcomplex_array raices_nesimas(numcomplex z1, int n);
 
 //funciones trigonométricas
-numcomplex cplx_sen(numcomplex z, double tolerancia =0.5*pow(10,-8));
+numcomplex cplx_sen(numcomplex z, double tolerancia =0.5*pow(10,-7));
 
 
 
@@ -90,11 +91,17 @@ int main() {
     cout << "El polinomio evaluado con Horner en 1+2i es: ";
     cout << "("<<polinomio.a<<","<<polinomio.b<<")" << '\n';
 
-    cout << "El seno de 1+2i: "<< cplx_sen(z1);
+    cout << "El seno de 1+2i: ("<<cplx_sen(z1).a<<","<<cplx_sen(z1).b<<")\n";
     return 0;
   }
 
 //Definición de funciones
+long double factorial(long double n){
+  long double factorial=1;
+  for(long double i=n;i>1;i--)
+  factorial*=i;
+  return factorial;
+}
 double cplx_mod(numcomplex z){
   double modulo=0;
   modulo = sqrt(pow(z.a,2)+pow(z.b,2));
@@ -201,8 +208,8 @@ numcomplex_array  raices_nesimas(numcomplex z1, int n){
 
 
 
-//funciones trigonométricas
 
+//funciones trigonométricas
 numcomplex cplx_sen(numcomplex z, double tolerancia){
   //implementa la serie de Taylor con siete cifras por default
 
@@ -218,7 +225,7 @@ numcomplex cplx_sen(numcomplex z, double tolerancia){
       coeficientes[k]=-sin(c)/factorial(k);
     if(k%4==3)
       coeficientes[k]=-cos(c)/factorial(k);
-  }
+    }
 
   return cplx_horner(20,coeficientes,z);
 
