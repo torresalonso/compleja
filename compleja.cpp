@@ -15,7 +15,13 @@ numcomplex cplx_prod(numcomplex z1, numcomplex z2);
 numcomplex cplx_div(numcomplex z1, numcomplex z2);
 numcomplex cplx_pow(numcomplex z1, int n);
 numcomplex cplx_raiz(numcomplex z1, double n);
+numcomplex cplx_ev_poli(int grado, double coeficientes[], numcomplex z);
+numcomplex cplx_horner(int grado, double coeficientes[], numcomplex z);
 numcomplex_array raices_nesimas(numcomplex z1, int n);
+
+
+//Variables globales
+int k=0;
 
 int main() {
   numcomplex z1, z2;
@@ -54,12 +60,63 @@ int main() {
   cout<<"Raices n-esimas(z1, 3):";
   numcomplex_array z_raices;
 
+
   z_raices = raices_nesimas(z1, 3);
-  for(int k=0; k < 2; k++)
+  for( k=0; k < 2; k++)
     cout << "\n("<<z_raices.array[k].a<<","<<z_raices.array[k].b<<")" << '\n';
 
-  return 0;
+
+    ///EVALUAR POLINOMIOS EN NÚMEROS COMPLEJOS
+    int grado;
+    cout << "GRADO:" << '\n';
+    cin >> grado;
+
+    double coeficientes[grado+1];
+    for ( k = 0; k <= grado; k++) {
+      cout << "a_" << k << "\n";
+      cin>>coeficientes[k];
+    }
+
+    numcomplex polinomio=cplx_ev_poli(grado, coeficientes, z1);
+
+    cout << "El polinomio evaluado en 1+2i es: ";
+    cout << "("<<polinomio.a<<","<<polinomio.b<<")" << '\n';
+
+    polinomio=cplx_horner(grado, coeficientes,z1);
+    cout << "El polinomio evaluado con Horner en 1+2i es: ";
+    cout << "("<<polinomio.a<<","<<polinomio.b<<")" << '\n';
+
+    return 0;
+  }
+
+numcomplex cplx_horner(int grado, double coeficientes[], numcomplex z){
+  numcomplex polinomio, coef_complejo;
+
+  cout << "\n\t(Desde Horner \n";
+  cout << "("<<z.a<<","<<z.b<<")" << '\n';
+
+  polinomio.a = coeficientes[grado];
+  polinomio.b = coeficientes[grado];
+  cout << "("<<polinomio.a<<","<<polinomio.b<<")" << '\n';
+
+  for(k=grado-1; k >= 0; k--){
+    coef_complejo.a = coeficientes[k];
+    coef_complejo.b=0;
+
+    polinomio=cplx_sum(coef_complejo,cplx_prod(z,polinomio));
+    cout << "\nk= "<<k<<"\tParte real: ";
+    cout <<polinomio.a<<" \n";
+
+    cout << "\nk= "<<k<<"\tParte Compleja: ";
+    cout <<polinomio.b<<" \n";
 }
+  return polinomio;
+}
+
+
+
+
+
 
 
 //Definición de funciones
@@ -129,6 +186,18 @@ numcomplex cplx_raiz(numcomplex z1, double n){
     z.b=pow(cplx_mod(z1),n)*sin(n*cplx_fase(z1));
   return z;
 }
+
+numcomplex cplx_ev_poli(int grado, double coeficientes[], numcomplex z){
+  ///EVALUAR POLINOMIOS EN NÚMEROS COMPLEJOS
+  int k=0;
+  numcomplex polinomio;
+  for(k = 0; k <= grado; k++){
+    polinomio.a+=cplx_pow(z,k).a*coeficientes[k];
+    polinomio.b+=cplx_pow(z,k).b*coeficientes[k];
+  }
+  return polinomio;
+}
+
 
 //Las n potencias n-ésimas del número z. Devuelve un arreglo de tipo numcomplex
 numcomplex_array  raices_nesimas(numcomplex z1, int n){
