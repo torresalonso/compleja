@@ -10,8 +10,8 @@ int main() {
   z1.a=1;
   z1.b=2;
 
-  z2.a=3;
-  z2.b=4;
+  z2.a=0;
+  z2.b=M_PI;
   //std::cout << "z1= (" <<z1.a<<","<<z1.b<<")\n";
   numcomplex z;
   cout << "modulo: z1" << cplx_mod(z)<< '\n';
@@ -66,6 +66,7 @@ int main() {
 
     cout << "El seno de 1+2i: ("<<cplx_sen(z1).a<<","<<cplx_sen(z1).b<<")\n";
     cout << "El coseno de 1+2i: ("<<cplx_cos(z1).a<<","<<cplx_cos(z1).b<<")\n";
+    cout << "La función exponencial de PIi: ("<<cplx_exp(z2).a<<","<<cplx_exp(z2).b<<")\n";
 
     return 0;
   }

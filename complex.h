@@ -6,6 +6,8 @@ typedef struct{numcomplex array[100];} numcomplex_array;
 long double factorial(long double n);
 double cplx_mod(numcomplex z);
 
+/*****************************************Variables globales*****************************************/
+int k=0;
 
 //*****************************************Funciones de Álgebra Compleja
 numcomplex cplx_conj(numcomplex z);
@@ -19,12 +21,11 @@ numcomplex cplx_ev_poli(int grado, double coeficientes[], numcomplex z);
 numcomplex cplx_horner(int grado, double coeficientes[], numcomplex z);
 numcomplex_array raices_nesimas(numcomplex z1, int n);
 
-//*****************************************funciones trigonométricas complejas
-numcomplex cplx_sen(numcomplex z, double tolerancia =0.5*pow(10,-7));
-numcomplex cplx_cos(numcomplex z, double tolerancia =0.5*pow(10,-7));
+//*****************************************funciones trascendentes complejas
+numcomplex cplx_sen(numcomplex z, double tolerancia = 0.5*pow(10,-7));
+numcomplex cplx_cos(numcomplex z, double tolerancia = 0.5*pow(10,-7));
+numcomplex cplx_exp(numcomplex z, double tolerancia = 0.5*pow(10,-7));
 
-//Variables globales
-int k=0;
 
 //Definición de funciones
 long double factorial(long double n){
@@ -139,7 +140,7 @@ numcomplex_array  raices_nesimas(numcomplex z1, int n){
   return arreglo;
 }
 
-//funciones trigonométricas
+//funciones trascendentes
 numcomplex cplx_sen(numcomplex z, double tolerancia){
   //implementa la serie de Taylor con siete cifras por default
 
@@ -160,24 +161,30 @@ numcomplex cplx_sen(numcomplex z, double tolerancia){
   return cplx_horner(20,coeficientes,z);
 
 }
-
 numcomplex cplx_cos(numcomplex z, double tolerancia){
   //implementa la serie de Taylor con siete cifras por default
-
   double coeficientes[21], c=0;
 
   for(k=0; k<=20; k++){
     //La derivada es cíclica:
     if(k%4==0)
-      coeficientes[k]=cos(c)/factorial(k);
+    coeficientes[k]=cos(c)/factorial(k);
     if(k%4==1)
-      coeficientes[k]=-sin(c)/factorial(k);
+    coeficientes[k]=-sin(c)/factorial(k);
     if(k%4==2)
-      coeficientes[k]=-cos(c)/factorial(k);
+    coeficientes[k]=-cos(c)/factorial(k);
     if(k%4==3)
-      coeficientes[k]=sin(c)/factorial(k);
-    }
+    coeficientes[k]=sin(c)/factorial(k);
+  }
 
   return cplx_horner(20,coeficientes,z);
+}
+numcomplex cplx_exp(numcomplex z, double tolerancia){
+  double coeficientes[21], c=0;
 
+  for(k=0; k<=20; k++)
+    //La derivada es siempre la misma:
+    coeficientes[k]=exp(c)/factorial(k);
+
+  return cplx_horner(20,coeficientes,z);
 }
