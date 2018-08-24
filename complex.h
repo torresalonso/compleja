@@ -34,14 +34,16 @@ long double factorial(long double n){
   factorial*=i;
   return factorial;
 }
+
+
 double cplx_mod(numcomplex z){
   double modulo=0;
   modulo = sqrt(pow(z.a,2)+pow(z.b,2));
   return modulo;
 }
 double cplx_fase(numcomplex z){
-  if(z.b==0){
-    return (z.a>0?(M_PI/2):(-M_PI/2));
+  if(z.a==0){
+    return (z.b>0?(M_PI/2):(-M_PI/2));
   }
   else
     return atan(z.b/z.a);
