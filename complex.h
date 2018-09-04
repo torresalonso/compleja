@@ -1,12 +1,14 @@
-/******************************Definición de tipos de dato complejo y array de complejos//*****************************************/
+  /******************************Definición de tipos de dato complejo y array de complejos//*****************************************/
 typedef struct{double a; double b;} numcomplex;
 typedef struct{numcomplex array[100];} numcomplex_array;
 
-/*****************************************Declaración de funciones*****************************************/
+/*********************************************************************************
+Declaración de funciones
+**********************************************************************************/
+
+//*****************************************Funciones de Álgebra Compleja
 long double factorial(long double n);
 double cplx_mod(numcomplex z);
-
-
 //*****************************************Funciones de Álgebra Compleja
 numcomplex cplx_conj(numcomplex z);
 numcomplex cplx_sum(numcomplex z1, numcomplex z2);
@@ -18,26 +20,30 @@ numcomplex cplx_raiz(numcomplex z1, double n);
 numcomplex cplx_ev_poli(int grado, double coeficientes[], numcomplex z);
 numcomplex cplx_horner(int grado, double coeficientes[], numcomplex z);
 numcomplex_array raices_nesimas(numcomplex z1, int n);
-
 //*****************************************funciones trigonométricas complejas
 numcomplex cplx_sen(numcomplex z, double tolerancia =0.5*pow(10,-7));
 numcomplex cplx_cos(numcomplex z, double tolerancia =0.5*pow(10,-7));
-
+//***************************************Funciones de polinomios
+numcomplex cplx_nr(int grado, double coeficientes[], numcomplex x_anterior, int cifras=6 );
 //Variables globales
 int k=0;
 
-//Definición de funciones
+/*********************************************************************************
+Definición de funciones
+**********************************************************************************/
 long double factorial(long double n){
   long double factorial=1;
   for(long double i=n;i>1;i--)
   factorial*=i;
   return factorial;
 }
+
 double cplx_mod(numcomplex z){
   double modulo=0;
   modulo = sqrt(pow(z.a,2)+pow(z.b,2));
   return modulo;
 }
+
 double cplx_fase(numcomplex z){
   if(z.b==0){
     return (z.a>0?(M_PI/2):(-M_PI/2));
@@ -52,18 +58,21 @@ numcomplex cplx_conj(numcomplex z){
   zconj.b = -zconj.b;
   return zconj;
 }
+
 numcomplex cplx_sum(numcomplex z1, numcomplex z2){
   numcomplex z;
   z.a = z1.a+z2.a;
   z.b = z1.b+z2.b;
   return z;
 }
+
 numcomplex cplx_dif(numcomplex z1, numcomplex z2){
   numcomplex z;
   z.a = z1.a-z2.a;
   z.b = z1.b-z2.b;
   return z;
 }
+
 numcomplex cplx_prod(numcomplex z1, numcomplex z2){
   numcomplex z;
   //(a,b)(c,d)=(ac-bd,ad+bc)
@@ -72,6 +81,7 @@ numcomplex cplx_prod(numcomplex z1, numcomplex z2){
   return z;
 
 }
+
 numcomplex cplx_div(numcomplex z1, numcomplex z2){
   numcomplex zconj;
   numcomplex z;
@@ -180,4 +190,30 @@ numcomplex cplx_cos(numcomplex z, double tolerancia){
 
   return cplx_horner(20,coeficientes,z);
 
+}
+//***************************************Funciones de polinomios
+numcomplex cplx_nr(int grado, double coeficientes[], numcomplex x_anterior, int cifras ){
+  int i=0;
+  double derivada[grado], tolerancia=0.5*pow(10,2-cifras), mod_err=0;
+  numcomplex x_actual, error;
+
+  for(i=0;i<grado;i++)
+    derivada[i]=coeficientes[i+1]*(i+1);
+
+  x_actual.a=0; x_actual.b=0;
+
+  do{
+    x_actual = cplx_dif(x_anterior, cplx_div(cplx_horner(grado, coeficientes,x_anterior),cplx_horner(grado-1, derivada,x_anterior)));
+    //calculamos el error a partir de la segunda iteración.
+    if(i>1){
+      error = cplx_div(cplx_dif(x_actual,x_anterior),x_actual);
+      mod_err = cplx_mod(error)*100;
+    }
+    i++;
+    //rescatar valor actual en anterior
+    x_anterior = x_actual;
+  }while (mod_err >= tolerancia);
+
+
+  return x_actual;
 }
